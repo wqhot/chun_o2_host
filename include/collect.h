@@ -1,10 +1,12 @@
 #ifndef __CHUN_O2_COLLECT_H_
 #define __CHUN_O2_COLLECT_H_
+#ifndef NATIVE
 #include <HardwareSerial.h>
+#include <display.h>
+#endif
 #include <vector>
 #include <algorithm>
 #include <node.hpp>
-#include <display.h>
 
 /*
 类别 |   帧头    |   ID    |    数据    |  校验和  
@@ -15,7 +17,10 @@ class Collection
 {
 public:
     Collection(NodeList &list);
+#ifndef NATIVE
     void recv();
+#endif
+    void recv(uint8_t *buffer, size_t length);
 
 private:
     const std::vector<uint8_t> HEAD{0x1, 0x2, 0x3, 0x4};
@@ -24,7 +29,9 @@ private:
     const size_t SUM_POS = 20;
     const size_t ID_LENGTH = 3;
     const size_t O2_BUFFER_LENGTH = 21;
+#ifndef NATIVE
     HardwareSerial serialCollect_;
+#endif
     std::vector<uint8_t> buffer_;
     NodeList &list_;
 

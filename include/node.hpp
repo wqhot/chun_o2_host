@@ -72,8 +72,42 @@ public:
         }
     }
 
+    Node &getNode(uint8_t *id)
+    {
+        uint32_t id_[ID_LENGTH];
+        getID(id, id_);
+        return getNode(id_);
+    }
+
+    size_t size() const
+    {
+        return list_.size();
+    }
+
 private:
     std::vector<Node> list_;
+    const size_t ID_LENGTH = 3;
+
+    uint8_t getID(uint8_t *pos, uint32_t *id)
+    {
+        uint8_t sum = 0;
+        union transfer
+        {
+            uint32_t id;
+            uint8_t data[4];
+        };
+        for (size_t i = 0; i != ID_LENGTH; i++)
+        {
+            transfer t;
+            t.data[0] = *(pos + i * 4 + 0);
+            t.data[1] = *(pos + i * 4 + 1);
+            t.data[2] = *(pos + i * 4 + 2);
+            t.data[3] = *(pos + i * 4 + 3);
+            sum += t.data[0] + t.data[1] + t.data[2] + t.data[3];
+            *(id + i) = t.id;
+        }
+        return sum;
+    }
 };
 
 #endif

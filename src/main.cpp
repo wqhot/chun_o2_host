@@ -1,3 +1,4 @@
+#ifndef NATIVE
 #include <Arduino.h>
 #include <node.hpp>
 #include <collect.h>
@@ -14,3 +15,5 @@ void loop()
 {
     collection.recv();
 }
+
+#endif

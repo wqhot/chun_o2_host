@@ -1,12 +1,35 @@
 #include <collect.h>
 
 Collection::Collection(NodeList &list) : 
+#ifndef NATIVE
     serialCollect_(1),
+#endif
     list_(list)
 {
+#ifndef NATIVE
     serialCollect_.begin(115200, SERIAL_8N1);
+#endif
 }
 
+void Collection::recv(uint8_t *buffer, size_t length)
+{
+    buffer_.insert(buffer_.end(), buffer, buffer + length);
+    // 从头解析buffer_
+    // 找到帧头
+    std::vector<uint8_t>::iterator head_pos = std::find_first_of(buffer_.begin(), buffer_.end(), HEAD.begin(), HEAD.end());
+    if (head_pos == buffer_.end())
+    {
+        return;
+    }
+    // 删除head_pos以前内容
+    buffer_.erase(buffer_.begin(), head_pos);
+    if (buffer_.size() >= O2_BUFFER_LENGTH)
+    {
+        parser();
+    }
+}
+
+#ifndef NATIVE
 void Collection::recv()
 {
     uint8_t buffer[O2_BUFFER_LENGTH];
@@ -26,6 +49,7 @@ void Collection::recv()
         parser();
     }
 }
+#endif
 
 uint8_t Collection::getID(std::vector<uint8_t>::iterator pos, uint32_t *id)
 {

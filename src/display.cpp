@@ -1,5 +1,5 @@
 #include <display.h>
-
+#ifndef NATIVE
 
 
 Display::Display(NodeList &list) : 
@@ -8,3 +8,5 @@ Display::Display(NodeList &list) :
 {
 
 }
+
+#endif
