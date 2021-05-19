@@ -2,7 +2,7 @@
 
 Collection::Collection(NodeList &list) : 
 #ifndef NATIVE
-    serialCollect_(1),
+    serialCollect_(PA3, PA2),
 #endif
     list_(list)
 {

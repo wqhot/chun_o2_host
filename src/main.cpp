@@ -9,11 +9,13 @@ Display display(list);
 
 void setup()
 {
+    display.drawText(0, 0, "hello world!");
 }
 
 void loop()
 {
     collection.recv();
+    delay(10);
 }
 
 #endif
