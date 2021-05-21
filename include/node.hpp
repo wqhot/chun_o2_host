@@ -3,6 +3,7 @@
 #include <vector>
 #include <stdint-gcc.h>
 #include <algorithm>
+#include <logger.hpp>
 
 class Node
 {
@@ -88,15 +89,38 @@ public:
         }
     }
 
+    bool isAlarm()
+    {
+        for (auto &node : list_)
+        {
+            if (node.getO2Num() > threshold_)
+            {
+                LOGGER << "ALARM!";
+                return true;
+            }
+        }
+        return false;
+    }
+
     size_t size() const
     {
         return list_.size();
     }
 
+    float getThreshold()
+    {
+        return threshold_;
+    }
+
+    void setThreshold(float threshold)
+    {
+        threshold_ =  threshold;
+    }
+
 private:
     std::vector<Node> list_;
     const size_t ID_LENGTH = 3;
-    float threshold;
+    float threshold_;
 
     uint8_t getID(uint8_t *pos, uint32_t *id)
     {
