@@ -4,6 +4,10 @@
 #include <stdint-gcc.h>
 #include <algorithm>
 #include <logger.hpp>
+#include <Wire.h>
+
+#define ADDR_Ax 0b000 //A2, A1, A0
+#define ADDR (0b1010 << 3) + ADDR_Ax
 
 class Node
 {
@@ -54,6 +58,19 @@ class NodeList
 public:
     NodeList()
     {
+        Wire.begin();
+        writeI2CByte(0, 1);
+        // 读取EEPROM中的阈值
+        union transfer
+        {
+            float f;
+            uint8_t data[4];
+        }t;
+        for (int i = 0; i != 4; ++i)
+        {
+            t.data[i] = readI2CByte(i + 1);
+        }
+        threshold_ = t.f;
     }
     Node &getNode(uint32_t *id)
     {
@@ -114,7 +131,18 @@ public:
 
     void setThreshold(float threshold)
     {
-        threshold_ =  threshold;
+        threshold_ = threshold;
+        // 将阈值写入EEPROM
+        union transfer
+        {
+            float f;
+            uint8_t data[4];
+        }t;
+        t.f = threshold_;
+        for (int i = 0; i != 4; ++i)
+        {
+            writeI2CByte(i + 1, t.data[i]);
+        }
     }
 
 private:
@@ -141,6 +169,29 @@ private:
             *(id + i) = t.id;
         }
         return sum;
+    }
+
+    void writeI2CByte(byte data_addr, byte data)
+    {
+        Wire.beginTransmission(ADDR);
+        Wire.write(data_addr);
+        Wire.write(data);
+        Wire.endTransmission();
+    }
+
+    byte readI2CByte(byte data_addr)
+    {
+        byte data = NULL;
+        Wire.beginTransmission(ADDR);
+        Wire.write(data_addr);
+        Wire.endTransmission();
+        Wire.requestFrom(ADDR, 1); //retrieve 1 returned byte
+        delay(1);
+        if (Wire.available())
+        {
+            data = Wire.read();
+        }
+        return data;
     }
 };
 
