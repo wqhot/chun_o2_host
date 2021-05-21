@@ -3,7 +3,7 @@
 #include <logger.hpp>
 
 Display::Display(NodeList &list) : list_(list),
-                                   u8g_(PB1, PB2, PB3, PB4),
+                                   u8g_(PA5, PA7, PB3, PB4),
                                    alarmPin(PB9),
                                    displayState_(mainScreen)
 {

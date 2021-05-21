@@ -11,8 +11,8 @@ Collection collection(list);
 Display display(list);
 Logger LOGGER;
 #define KEY_ADD PB5 // PB5 加
-#define KEY_SUB PB6 // PB6 减
-#define KEY_CONFIRM PB7 // PB7 确认
+#define KEY_SUB PB10 // PB6 减
+#define KEY_CONFIRM PB11 // PB7 确认
 #define KEY_CANCEL PB8 // PB8 取消
 Key key({KEY_ADD, KEY_SUB, KEY_CONFIRM, KEY_CANCEL});
 bool enableAlarm = true;
