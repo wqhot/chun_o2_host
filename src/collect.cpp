@@ -11,7 +11,7 @@ Collection::Collection(NodeList &list) :
 #endif
 }
 
-void Collection::recv(uint8_t *buffer, size_t length)
+bool Collection::recv(uint8_t *buffer, size_t length)
 {
     buffer_.insert(buffer_.end(), buffer, buffer + length);
     // 从头解析buffer_
@@ -19,18 +19,20 @@ void Collection::recv(uint8_t *buffer, size_t length)
     std::vector<uint8_t>::iterator head_pos = std::find_first_of(buffer_.begin(), buffer_.end(), HEAD.begin(), HEAD.end());
     if (head_pos == buffer_.end())
     {
-        return;
+        return false;
     }
     // 删除head_pos以前内容
     buffer_.erase(buffer_.begin(), head_pos);
     if (buffer_.size() >= O2_BUFFER_LENGTH)
     {
         parser();
+        return true;
     }
+    return false;
 }
 
 #ifndef NATIVE
-void Collection::recv()
+bool Collection::recv()
 {
     uint8_t buffer[O2_BUFFER_LENGTH];
     size_t length = serialCollect_.readBytes(buffer, O2_BUFFER_LENGTH);
@@ -40,14 +42,16 @@ void Collection::recv()
     std::vector<uint8_t>::iterator head_pos = std::find_first_of(buffer_.begin(), buffer_.end(), HEAD.begin(), HEAD.end());
     if (head_pos == buffer_.end())
     {
-        return;
+        return false;
     }
     // 删除head_pos以前内容
     buffer_.erase(buffer_.begin(), head_pos);
     if (buffer_.size() >= O2_BUFFER_LENGTH)
     {
         parser();
+        return true;
     }
+    return false;
 }
 #endif
 

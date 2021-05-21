@@ -18,9 +18,9 @@ class Collection
 public:
     Collection(NodeList &list);
 #ifndef NATIVE
-    void recv();
+    bool recv();
 #endif
-    void recv(uint8_t *buffer, size_t length);
+    bool recv(uint8_t *buffer, size_t length);
 
 private:
     const std::vector<uint8_t> HEAD{0x1, 0x2, 0x3, 0x4};
@@ -34,9 +34,11 @@ private:
 #endif
     std::vector<uint8_t> buffer_;
     NodeList &list_;
-
+    // 帧格式解析
     void parser();
+    // 计算ID
     uint8_t getID(std::vector<uint8_t>::iterator pos, uint32_t *id);
+    // 计算数据
     uint8_t getData(std::vector<uint8_t>::iterator pos, float &data);
 };
 // extern HardwareSerial serial_collect;

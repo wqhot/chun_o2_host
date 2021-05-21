@@ -1,10 +1,9 @@
 #include <display.h>
 #ifndef NATIVE
 
-
-Display::Display(NodeList &list) : 
-    list_(list),
-    u8g_(PB1, PB2, PB3, PB4)
+Display::Display(NodeList &list) : list_(list),
+                                   u8g_(PB1, PB2, PB3, PB4),
+                                   displayState_(mainScreen)
 {
     // 设置字体大小 对齐方式
     u8g_.setFont(u8g_font_6x13);
@@ -21,6 +20,18 @@ void Display::drawText(uint8_t pos, uint8_t line, std::string str)
     uint8_t h = u8g_.getFontAscent() - u8g_.getFontDescent();
     // 画字符
     u8g_.drawStr(pos, line * h, str.c_str());
+}
+
+void Display::refresh()
+{  
+    if (displayState_ == mainScreen)
+    {
+        // for (auto &node : list_)
+        // {
+
+        // }
+        
+    }
 }
 
 #endif

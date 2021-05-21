@@ -79,6 +79,15 @@ public:
         return getNode(id_);
     }
 
+    void getNodeState(std::vector<float> &o2)
+    {
+        o2.clear();
+        for (auto &node : list_)
+        {
+            o2.push_back(node.getO2Num());
+        }
+    }
+
     size_t size() const
     {
         return list_.size();
@@ -87,6 +96,7 @@ public:
 private:
     std::vector<Node> list_;
     const size_t ID_LENGTH = 3;
+    float threshold;
 
     uint8_t getID(uint8_t *pos, uint32_t *id)
     {
