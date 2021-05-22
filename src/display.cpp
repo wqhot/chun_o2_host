@@ -120,7 +120,7 @@ void Display::refresh()
         for (size_t i = 0; i != o2s.size(); ++i)
         {
             std::string str;
-            if (o2s[i] > list_.getThreshold())
+            if (o2s[i] < list_.getThreshold())
             {
                 // 整数部分
                 int intPart = static_cast<int>(o2s[i] * 100) / 100;
@@ -130,7 +130,7 @@ void Display::refresh()
                 int thresholdIntPart = static_cast<int>(list_.getThreshold() * 100) / 100;
                 // 小数部分
                 int thresholdDecPart = static_cast<int>(list_.getThreshold() * 100) % 100;
-                str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "% less than threshold that = " + std::to_string(intPart) + "." + std::to_string(decPart);
+                str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "% less than threshold that = " + std::to_string(thresholdIntPart) + "." + std::to_string(thresholdDecPart);
                 LOGGER << str;
                 drawText(1, i + 1, str);
             }

@@ -65,7 +65,7 @@ public:
         {
             float f;
             uint8_t data[4];
-        }t;
+        } t;
         for (int i = 0; i != 4; ++i)
         {
             t.data[i] = readI2CByte(i + 1);
@@ -110,7 +110,7 @@ public:
     {
         for (auto &node : list_)
         {
-            if (node.getO2Num() > threshold_)
+            if (node.getO2Num() < threshold_)
             {
                 LOGGER << "ALARM!";
                 return true;
@@ -137,7 +137,7 @@ public:
         {
             float f;
             uint8_t data[4];
-        }t;
+        } t;
         t.f = threshold_;
         for (int i = 0; i != 4; ++i)
         {
