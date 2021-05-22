@@ -19,6 +19,8 @@ bool enableAlarm = true;
 
 void setup()
 {
+    display.begin();
+    delay(100);
     display.drawText(0, 0, "hello world!");
     LOGGER << "Init Finish";
 }

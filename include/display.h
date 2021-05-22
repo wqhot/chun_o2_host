@@ -29,6 +29,7 @@ public:
     Display(NodeList &list);
     void drawText(uint8_t pos, uint8_t line, std::string str);
     void refresh();
+    void begin();
     inline void setState(DisplayState state)
     {
         displayState_ = state;
