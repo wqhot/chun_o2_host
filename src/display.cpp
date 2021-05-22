@@ -30,6 +30,7 @@ void Display::drawText(uint8_t pos, uint8_t line, std::string str)
 
 void Display::refresh()
 {
+    u8g_.clearBuffer();	
     if (displayState_ == mainScreen)
     {
         // 处理事件队列, 直接清空
@@ -125,7 +126,11 @@ void Display::refresh()
                 int intPart = static_cast<int>(o2s[i] * 100) / 100;
                 // 小数部分
                 int decPart = static_cast<int>(o2s[i] * 100) % 100;
-                str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "% less than threshold!";
+                // 整数部分
+                int thresholdIntPart = static_cast<int>(list_.getThreshold() * 100) / 100;
+                // 小数部分
+                int thresholdDecPart = static_cast<int>(list_.getThreshold() * 100) % 100;
+                str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "% less than threshold that = " + std::to_string(intPart) + "." + std::to_string(decPart);
                 LOGGER << str;
                 drawText(1, i + 1, str);
             }
