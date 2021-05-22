@@ -116,7 +116,7 @@ void Display::refresh()
         std::vector<float> o2s;
         // 读取传感器值
         list_.getNodeState(o2s);
-        for (size_t i; i != o2s.size(); ++i)
+        for (size_t i = 0; i != o2s.size(); ++i)
         {
             std::string str;
             if (o2s[i] > list_.getThreshold())
