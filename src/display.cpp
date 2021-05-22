@@ -3,7 +3,7 @@
 #include <logger.hpp>
 
 Display::Display(NodeList &list) : list_(list),
-                                   u8g_(PA5, PA7, PB3, PB4),
+                                   u8g_(U8G2_R0, /* clock=*/ PA5, /* data=*/ PA7, /* cs=*/ PB3, /* dc=*/ PB4, /* reset=*/ PB12),
                                    alarmPin(PB9),
                                    displayState_(mainScreen)
 {
@@ -12,8 +12,6 @@ Display::Display(NodeList &list) : list_(list),
     u8g_.setFontRefHeightText();
     u8g_.setFontPosTop();
 
-    // 设置前景颜色
-    u8g_.setDefaultForegroundColor();
     pinMode(alarmPin, OUTPUT);
     digitalWrite(alarmPin, LOW);
 }

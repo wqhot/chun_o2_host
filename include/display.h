@@ -1,12 +1,11 @@
 #ifndef __CHUN_O2_DISPLAY_H_
 #define __CHUN_O2_DISPLAY_H_
 #ifndef NATIVE
-#include <SPI.h>
+
 #include <Wire.h>
 #include <node.hpp>
-#include <U8glib.h>
-#include <U8glibPrint.h>
-#include <U8glibPrintable.h>
+#include <U8g2lib.h>
+#include <SPI.h>
 #include <queue>
 
 enum DisplayState
@@ -49,7 +48,7 @@ private:
     float threshold_;
     // 事件队列
     std::queue<Event> eventQue_;
-    U8GLIB_SSD1306_128X64 u8g_;
+    U8G2_SSD1306_128X64_NONAME_1_4W_SW_SPI u8g_;
     uint8_t alarmPin;
     // 显示状态
     DisplayState displayState_;
