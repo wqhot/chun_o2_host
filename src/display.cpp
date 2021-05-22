@@ -50,7 +50,7 @@ void Display::refresh()
             int decPart = static_cast<int>(o2s[i] * 100) % 100;
             str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
             LOGGER << str;
-            drawText(0, i, str);
+            drawText(1, i + 1, str);
         }
         digitalWrite(alarmPin, LOW);
     }
@@ -101,7 +101,7 @@ void Display::refresh()
         // 小数部分
         int decPart = static_cast<int>(threshold_ * 100) % 100;
         std::string str = "Alarm Threshold = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
-        drawText(0, 0, str);
+        drawText(1, 1, str);
         LOGGER << "Setting screen. Threshold = " << std::to_string(threshold_);
         digitalWrite(alarmPin, LOW);
     }
@@ -127,7 +127,7 @@ void Display::refresh()
                 int decPart = static_cast<int>(o2s[i] * 100) % 100;
                 str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "% less than threshold!";
                 LOGGER << str;
-                drawText(0, i, str);
+                drawText(1, i + 1, str);
             }
             else
             {
@@ -137,7 +137,7 @@ void Display::refresh()
                 int decPart = static_cast<int>(o2s[i] * 100) % 100;
                 str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
                 LOGGER << str;
-                drawText(0, i, str);
+                drawText(1, i + 1, str);
             }
         }
         digitalWrite(alarmPin, HIGH);

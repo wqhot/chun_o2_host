@@ -21,7 +21,7 @@ void setup()
 {
     display.begin();
     delay(100);
-    display.drawText(0, 0, "hello world!");
+    display.drawText(1, 1, "hello chuner!");
     LOGGER << "Init Finish";
 }
 

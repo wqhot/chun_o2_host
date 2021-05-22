@@ -16,14 +16,14 @@ public:
     Logger& operator << (std::string str)
     {
         logSerial.write(str.c_str(), str.size());
-        logSerial.write("/n");
+        logSerial.write("\n");
         return *this;
     }
 
     Logger& operator << (const char* str)
     {
         logSerial.write(str);
-        logSerial.write("/n");
+        logSerial.write("\n");
         return *this;
     }
 private:
