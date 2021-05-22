@@ -7,10 +7,15 @@ Display::Display(NodeList &list) : list_(list),
                                    alarmPin(PB9),
                                    displayState_(mainScreen)
 {
+    u8g_.begin();
     // 设置字体大小 对齐方式
-    u8g_.setFont(u8g_font_6x13);
-    u8g_.setFontRefHeightText();
-    u8g_.setFontPosTop();
+    // u8g_.setFont(u8g_font_6x13);
+    // u8g_.setFontRefHeightText();
+    // u8g_.setFontPosTop();
+    u8g2.clearBuffer();					// clear the internal memory
+    u8g2.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
+    // u8g2.drawStr(0,10,"Hello World!");  // write something to the internal memory
+    // u8g2.sendBuffer();                  // transfer internal memory to the display
 
     pinMode(alarmPin, OUTPUT);
     digitalWrite(alarmPin, LOW);
@@ -22,6 +27,7 @@ void Display::drawText(uint8_t pos, uint8_t line, std::string str)
     uint8_t h = u8g_.getFontAscent() - u8g_.getFontDescent();
     // 画字符
     u8g_.drawStr(pos, line * h, str.c_str());
+    u8g2.sendBuffer();
 }
 
 void Display::refresh()
