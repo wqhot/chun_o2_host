@@ -1,5 +1,6 @@
 #include <key.h>
 #ifndef NATIVE
+#include <logger.hpp>
 
 Key::Key(std::vector<uint8_t> keyList)
     : lastClickKey_(0)
@@ -47,6 +48,7 @@ bool Key::isPress(uint8_t key, uint32_t time)
     {
         return false;
     }
+    LOGGER << (std::to_string(key) + " button pressed for " + std::to_string(iter->second) );
     // 满足时间要求
     if (iter->second > time)
     {
