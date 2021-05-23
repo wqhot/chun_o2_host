@@ -125,6 +125,6 @@ void Collection::parser()
     }
     // 删除这一帧
     buffer_.erase(buffer_.begin(), buffer_.begin() + O2_BUFFER_LENGTH);
-    LOGGER << "Received message that o2 = " << std::to_string(o2) << "%.";
+    //浮点数o2转str的bug LOGGER << "Received message that o2 = " << std::to_string(o2) << "%.";
     list_.getNode(id).setO2Num(o2);
 }
