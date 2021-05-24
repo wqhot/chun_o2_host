@@ -31,12 +31,20 @@ void Key::scan()
                 // 记录一次点击
                 lastClickKey_ = key.first;
             }
-            key.second = 0;
+            else if (key.second == -1)
+            {
+                //之前被按下一直未抬起
+                key.second = 0;
+                LOGGER << std::to_string(key.first) +  " button released.";
+            }
         }
         else
         {
-            // 低电平， 计数加一
-            ++key.second;
+            if (key.second >= 0)
+            {
+                // 低电平， 计数加一
+                ++key.second;
+            }
         }
     }
 }
@@ -54,7 +62,7 @@ bool Key::isPress(uint8_t key, uint32_t time)
     // 满足时间要求
     if (iter->second > time)
     {
-        iter->second = 0;
+        iter->second = -1;
         return true;
     }
     return false;
