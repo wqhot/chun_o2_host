@@ -40,6 +40,7 @@ void Display::drawText(uint8_t pos, uint8_t line, std::string str)
 void Display::refresh()
 {
     u8g_.clearBuffer();
+    LOGGER << "The state of display is " + std::to_string(displayState_);
     if (displayState_ == mainScreen)
     {
         // 处理事件队列, 直接清空
@@ -66,10 +67,12 @@ void Display::refresh()
     }
     else if (displayState_ == settingScreen)
     {
+        LOGGER << "Refreshing setting screen.";
         // 处理事件队列
         while (eventQue_.size() != 0)
         {
             Event event = eventQue_.front();
+            eventQue_.pop();
             switch (event)
             {
             case addEvent:
@@ -112,7 +115,6 @@ void Display::refresh()
             default:
                 break;
             }
-            eventQue_.pop();
         }
         // 整数部分
         int intPart = static_cast<int>(threshold_ * 100) / 100;
