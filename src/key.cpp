@@ -58,10 +58,11 @@ bool Key::isPress(uint8_t key, uint32_t time)
     {
         return false;
     }
-    LOGGER << (std::to_string(key) + " button pressed for " + std::to_string(iter->second) );
+    //LOGGER << (std::to_string(key) + " button pressed for " + std::to_string(iter->second) );
     // 满足时间要求
     if (iter->second > time)
     {
+        LOGGER << (std::to_string(key) + " button pressed for " + std::to_string(iter->second) );
         iter->second = -1;
         return true;
     }
@@ -73,6 +74,7 @@ bool Key::isClick(uint8_t key)
     if (lastClickKey_ == key)
     {
         lastClickKey_ = 0;
+        LOGGER << std::to_string(key) + " button clicked";
         return true;
     }
     return false;

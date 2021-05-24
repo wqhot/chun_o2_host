@@ -51,14 +51,14 @@ bool Collection::recv()
 {
     std::vector<uint8_t> buffer;
     size_t length = recvData(buffer, O2_BUFFER_LENGTH);
-    LOGGER << ("Received " + std::to_string(length) + " bytes message from node.");
+    //LOGGER << ("Received " + std::to_string(length) + " bytes message from node.");
     buffer_.insert(buffer_.end(), buffer.begin(), buffer.end());
     // 从头解析buffer_
     // 找到帧头
     std::vector<uint8_t>::iterator head_pos = std::find_first_of(buffer_.begin(), buffer_.end(), HEAD.begin(), HEAD.end());
     if (head_pos == buffer_.end())
     {
-        LOGGER << "Cannot find head from message frame.";
+        //LOGGER << "Cannot find head from message frame.";
         return false;
     }
     // 删除head_pos以前内容
