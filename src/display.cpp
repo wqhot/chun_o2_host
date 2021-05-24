@@ -101,6 +101,7 @@ void Display::refresh()
                 break;
             case cancelEvent:
                 setState(mainScreen);
+                threshold_ = list_.getThreshold();
                 refresh();
                 LOGGER << "Cancel event processed over. Threshold = " + float2string(threshold_);
                 return;
