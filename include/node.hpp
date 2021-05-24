@@ -56,16 +56,20 @@ private:
 class NodeList
 {
 public:
-    NodeList() : at24c04_(ADDR)
+    NodeList()
     {
-        at24c04_.initialize();
+        Wire.begin();
+        writeI2CByte(0, 1);
         // 读取EEPROM中的阈值
         union transfer
         {
             float f;
             uint8_t data[4];
         } t;
-        at24c04_.readBytes(0, 4, t.data);
+        for (int i = 0; i != 4; ++i)
+        {
+            t.data[i] = readI2CByte(i + 1);
+        }
         threshold_ = t.f;
         if (threshold_ >= 100)
         {
@@ -143,14 +147,16 @@ public:
             uint8_t data[4];
         } t;
         t.f = threshold_;
-        at24c04_.writeBytes(0, 4, t.data);
+        for (int i = 0; i != 4; ++i)
+        {
+            writeI2CByte(i + 1, t.data[i]);
+        }
     }
 
 private:
     std::vector<Node> list_;
     const size_t ID_LENGTH = 3;
     float threshold_;
-    AT24C04 at24c04_;
 
     uint8_t getID(uint8_t *pos, uint32_t *id)
     {
