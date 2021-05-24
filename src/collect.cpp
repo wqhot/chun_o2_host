@@ -4,8 +4,7 @@ Collection::Collection(NodeList &list) :
 #ifndef NATIVE
     serialCollect_(PA3, PA2),
 #endif
-    list_(list),
-    recvLength(0)
+    list_(list)
 {
 #ifndef NATIVE
     serialCollect_.begin(115200, SERIAL_8N1);
@@ -34,12 +33,26 @@ bool Collection::recv(uint8_t *buffer, size_t length)
 }
 
 #ifndef NATIVE
+
+int Collection::recvData(std::vector<uint8_t> &buffer, int maxLength)
+{
+    int c = serialCollect_.read();
+    int length = 0;
+    while (c > 0 && length < maxLength)
+    {
+        buffer.push_back(c);
+        ++length;
+        c = serialCollect_.read();
+    }
+    return length;
+}
+
 bool Collection::recv()
 {
-    // uint8_t buffer[O2_BUFFER_LENGTH];
-    // size_t length = serialCollect_.readBytes(buffer, O2_BUFFER_LENGTH);
-    LOGGER << ("Received " + std::to_string(recvLength) + " bytes message from node.");
-    // buffer_.insert(buffer_.end(), buffer, buffer + length);
+    std::vector<uint8_t> buffer;
+    size_t length = recvData(buffer, O2_BUFFER_LENGTH);
+    LOGGER << ("Received " + std::to_string(length) + " bytes message from node.");
+    buffer_.insert(buffer_.end(), buffer.begin(), buffer.end());
     // 从头解析buffer_
     // 找到帧头
     std::vector<uint8_t>::iterator head_pos = std::find_first_of(buffer_.begin(), buffer_.end(), HEAD.begin(), HEAD.end());
@@ -50,11 +63,9 @@ bool Collection::recv()
     }
     // 删除head_pos以前内容
     buffer_.erase(buffer_.begin(), head_pos);
-    recvLength = recvLength - (head_pos - buffer_.begin());
     if (buffer_.size() >= O2_BUFFER_LENGTH)
     {
         parser();
-        recvLength = 0;
         return true;
     }
     return false;

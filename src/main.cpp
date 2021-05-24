@@ -94,17 +94,5 @@ void loop()
     delay(10);
 }
 
-// 串口中断函数
-void serialEvent2()
-{
-    while (collection.getSerialCollect().available())
-    {
-        // 收取新字节
-        uint8_t inChar = (uint8_t)collection.getSerialCollect().read();
-        ++collection.recvLength;
-        // 添加到buffer中
-        collection.getBuffer().push_back(inChar);
-    }
-}
 
 #endif
