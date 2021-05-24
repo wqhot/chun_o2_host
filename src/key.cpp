@@ -30,6 +30,8 @@ void Key::scan()
                 // 之前被按下
                 // 记录一次点击
                 lastClickKey_ = key.first;
+                // 计数归零
+                key.second = 0;
             }
             else if (key.second == -1)
             {
