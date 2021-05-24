@@ -4,10 +4,10 @@
 #include <stdint-gcc.h>
 #include <algorithm>
 #include <logger.hpp>
-#include <Wire.h>
+#include <at24c04.h>
 
 #define ADDR_Ax 0b000 //A2, A1, A0
-#define ADDR (0b1010 << 3) + ADDR_Ax
+#define ADDR 0x50
 
 class Node
 {
@@ -56,20 +56,16 @@ private:
 class NodeList
 {
 public:
-    NodeList()
+    NodeList() : at24c04_(ADDR)
     {
-        Wire.begin();
-        writeI2CByte(0, 1);
+        at24c04_.initialize();
         // 读取EEPROM中的阈值
         union transfer
         {
             float f;
             uint8_t data[4];
         } t;
-        for (int i = 0; i != 4; ++i)
-        {
-            t.data[i] = readI2CByte(i + 1);
-        }
+        at24c04_.readBytes(0, 4, t.data);
         threshold_ = t.f;
         if (threshold_ >= 100)
         {
@@ -147,16 +143,14 @@ public:
             uint8_t data[4];
         } t;
         t.f = threshold_;
-        for (int i = 0; i != 4; ++i)
-        {
-            writeI2CByte(i + 1, t.data[i]);
-        }
+        at24c04_.writeBytes(0, 4, t.data);
     }
 
 private:
     std::vector<Node> list_;
     const size_t ID_LENGTH = 3;
     float threshold_;
+    AT24C04 at24c04_;
 
     uint8_t getID(uint8_t *pos, uint32_t *id)
     {
@@ -179,29 +173,7 @@ private:
         return sum;
     }
 
-    void writeI2CByte(byte data_addr, byte data)
-    {
-        Wire.beginTransmission(ADDR | ((data_addr >> 8) & 0x07));
-        Wire.write(data_addr);
-        Wire.write(data);
-        Wire.endTransmission();
-        delay(10);
-    }
-
-    byte readI2CByte(byte data_addr)
-    {
-        byte data = 0;
-        Wire.beginTransmission(ADDR  | ((data_addr >> 8) & 0x07));
-        Wire.write(data_addr);
-        Wire.endTransmission();
-        Wire.requestFrom(ADDR  | ((data_addr >> 8) & 0x07), 1); //retrieve 1 returned byte
-        delay(1);
-        if (Wire.available())
-        {
-            data = Wire.read();
-        }
-        return data;
-    }
+    
 };
 
 #endif
