@@ -2,6 +2,8 @@
 #ifndef NATIVE
 #include <logger.hpp>
 
+#define CLICK_TIME 5
+
 Key::Key(std::vector<uint8_t> keyList)
     : lastClickKey_(0)
 {
@@ -23,7 +25,7 @@ void Key::scan()
         if (state == HIGH)
         {
             // 高电平, 计数归零
-            if (key.second > 0)
+            if (key.second > CLICK_TIME)
             {
                 // 之前被按下
                 // 记录一次点击
