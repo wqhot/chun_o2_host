@@ -8,7 +8,7 @@ Display::Display(NodeList &list) : list_(list),
                                    displayState_(mainScreen)
 {
     pinMode(alarmPin, OUTPUT);
-    digitalWrite(alarmPin, LOW);
+    digitalWrite(alarmPin, HIGH);
 }
 
 void Display::begin()
@@ -53,7 +53,7 @@ void Display::refresh()
             LOGGER << str;
             drawText(1, i + 1, str);
         }
-        digitalWrite(alarmPin, LOW);
+        digitalWrite(alarmPin, HIGH);
     }
     else if (displayState_ == settingScreen)
     {
@@ -112,7 +112,7 @@ void Display::refresh()
         std::string str = "Alarm Threshold = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
         drawText(1, 1, str);
         LOGGER << "Setting screen. Threshold = " << std::to_string(threshold_);
-        digitalWrite(alarmPin, LOW);
+        digitalWrite(alarmPin, HIGH);
     }
     else if (displayState_ == alarmScreen)
     {
@@ -153,7 +153,7 @@ void Display::refresh()
                 drawText(1, i + 1, str);
             }
         }
-        digitalWrite(alarmPin, HIGH);
+        digitalWrite(alarmPin, LOW);
     }
 }
 
