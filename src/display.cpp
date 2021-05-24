@@ -3,7 +3,7 @@
 #include <logger.hpp>
 
 Display::Display(NodeList &list) : list_(list),
-                                   u8g_(U8G2_R0, /* clock=*/ PA5, /* data=*/ PA7, /* cs=*/ PB3, /* dc=*/ PB4, /* reset=*/ PB12),
+                                   u8g_(U8G2_R0, /* clock=*/PA5, /* data=*/PA7, /* cs=*/PB3, /* dc=*/PB4, /* reset=*/PB12),
                                    alarmPin(PB9),
                                    displayState_(mainScreen)
 {
@@ -15,8 +15,17 @@ void Display::begin()
 {
     u8g_.begin();
 
-    u8g_.clearBuffer();	                   // clear the internal memory
-    u8g_.setFont(u8g2_font_ncenB08_tr);    // choose a suitable font
+    u8g_.clearBuffer();                 // clear the internal memory
+    u8g_.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
+}
+
+std::string float2string(float val)
+{
+    // 整数部分
+    int intPart = static_cast<int>(val * 100) / 100;
+    // 小数部分
+    int decPart = static_cast<int>(val * 100) % 100;
+    return std::to_string(intPart) + "." + std::to_string(std::abs(decPart));
 }
 
 void Display::drawText(uint8_t pos, uint8_t line, std::string str)
@@ -30,7 +39,7 @@ void Display::drawText(uint8_t pos, uint8_t line, std::string str)
 
 void Display::refresh()
 {
-    u8g_.clearBuffer();	
+    u8g_.clearBuffer();
     if (displayState_ == mainScreen)
     {
         // 处理事件队列, 直接清空
@@ -73,7 +82,7 @@ void Display::refresh()
                 {
                     threshold_ = 0.0;
                 }
-                LOGGER << "Add event processed over. Threshold = " << std::to_string(threshold_);
+                LOGGER << "Add event processed over. Threshold = " + float2string(threshold_);
                 break;
             case subEvent:
                 threshold_ -= 0.1;
@@ -85,19 +94,19 @@ void Display::refresh()
                 {
                     threshold_ = 0.0;
                 }
-                LOGGER << "Sub event processed over. Threshold = " << std::to_string(threshold_);
+                LOGGER << "Sub event processed over. Threshold = " + float2string(threshold_);
                 break;
             case cancelEvent:
                 setState(mainScreen);
                 refresh();
-                LOGGER << "Cancel event processed over. Threshold = " << std::to_string(threshold_);
+                LOGGER << "Cancel event processed over. Threshold = " + float2string(threshold_);
                 return;
                 break;
             case confirmEvent:
                 list_.setThreshold(threshold_);
                 setState(mainScreen);
                 refresh();
-                LOGGER << "Confirm event processed over. Threshold = " << std::to_string(threshold_);
+                LOGGER << "Confirm event processed over. Threshold = " + float2string(threshold_);
                 return;
                 break;
             default:
