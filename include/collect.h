@@ -21,6 +21,15 @@ public:
     bool recv();
 #endif
     bool recv(uint8_t *buffer, size_t length);
+    inline HardwareSerial &getSerialCollect()
+    {
+        return serialCollect_;
+    }
+    inline std::vector<uint8_t> &getBuffer()
+    {
+        return buffer_;
+    }
+    size_t recvLength;
 
 private:
     const std::vector<uint8_t> HEAD{0x1, 0x2, 0x3, 0x4};

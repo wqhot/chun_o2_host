@@ -111,7 +111,7 @@ void Display::refresh()
         int decPart = static_cast<int>(threshold_ * 100) % 100;
         std::string str = "Alarm Threshold = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
         drawText(1, 1, str);
-        LOGGER << "Setting screen. Threshold = " << std::to_string(threshold_);
+        LOGGER << "Setting screen. Threshold = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
         digitalWrite(alarmPin, HIGH);
     }
     else if (displayState_ == alarmScreen)
