@@ -8,6 +8,7 @@ Collection::Collection(NodeList &list) :
 {
 #ifndef NATIVE
     serialCollect_.begin(115200, SERIAL_8N1);
+    serialCollect_.setTimeout(1);
 #endif
 }
 
