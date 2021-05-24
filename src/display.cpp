@@ -69,10 +69,18 @@ void Display::refresh()
                 {
                     threshold_ = 100.0;
                 }
+                if (threshold_ <= 0)
+                {
+                    threshold_ = 0.0;
+                }
                 LOGGER << "Add event processed over. Threshold = " << std::to_string(threshold_);
                 break;
             case subEvent:
                 threshold_ -= 0.1;
+                if (threshold_ >= 100)
+                {
+                    threshold_ = 100.0;
+                }
                 if (threshold_ <= 0)
                 {
                     threshold_ = 0.0;

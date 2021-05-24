@@ -71,6 +71,14 @@ public:
             t.data[i] = readI2CByte(i + 1);
         }
         threshold_ = t.f;
+        if (threshold_ >= 100)
+        {
+            threshold_ = 100.0;
+        }
+        if (threshold_ <= 0)
+        {
+            threshold_ = 0.0;
+        }
     }
     Node &getNode(uint32_t *id)
     {
