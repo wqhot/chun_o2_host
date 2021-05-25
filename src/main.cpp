@@ -22,8 +22,11 @@ void setup()
 {
     display.begin();
     delay(100);
-    display.drawText(1, 1, "Oxygen concentration monitor");
-    list.setThreshold(40.0);
+    display.drawLine(0, "Oxygen concentration");
+    display.drawLine(1, "monitor");
+    display.drawLine(3, "by Wei");
+    display.send();
+    list.setThreshold(21.0);
     LOGGER << "Init Finish";
 }
 
