@@ -15,7 +15,6 @@ Display::Display(NodeList &list) : list_(list),
 void Display::begin()
 {
     u8g_.begin();
-
     u8g_.clearBuffer();                 // clear the internal memory
     u8g_.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
 }
@@ -117,7 +116,7 @@ void Display::refresh()
         {
             eventQue_.pop();
         }
-        LOGGER << "ALARM screen is on.";
+        //LOGGER << "ALARM screen is on.";
         std::vector<float> o2s;
         // 读取传感器值
         list_.getNodeState(o2s);

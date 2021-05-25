@@ -21,7 +21,8 @@ void setup()
 {
     display.begin();
     delay(100);
-    display.drawText(1, 1, "Thanks Qiang!");
+    display.drawText(1, 1, "Oxygen concentration monitor");
+    list.setThreshold(40.0);
     LOGGER << "Init Finish";
 }
 
@@ -46,7 +47,12 @@ void loop()
         // 长按确认键1s关闭报警功能
         if (isAlarm)
         {
+            LOGGER << "Alarm State.CONFIRM button pressed.";
             enableAlarm = false;
+            needRefresh = true;
+            display.setState(mainScreen);
+        }else{
+            LOGGER << "CONFIRM button pressed.";
         }
     }
     else
