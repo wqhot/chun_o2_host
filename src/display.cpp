@@ -48,12 +48,13 @@ void Display::refresh()
         std::vector<float> o2s;
         // 读取传感器值
         list_.getNodeState(o2s);
+        drawLine(0, "Monitoring...");
         for (size_t i = 0; i != o2s.size(); ++i)
         {
             std::string str;
             str = "Node[" + std::to_string(i) + "] O2 = " + mutils::float2string(o2s[i]) + "%";
             LOGGER << str;
-            drawLine(i, str);
+            drawLine(i + 1, str);
         }
         digitalWrite(alarmPin, HIGH);
     }
@@ -109,8 +110,8 @@ void Display::refresh()
                 break;
             }
         }
-        std::string str = "Alarm Threshold = " + mutils::float2string(threshold_) + "%";
-        drawLine(0, str);
+        drawLine(0, "Alarm Threshold");
+        drawLine(0, mutils::float2string(threshold_) + "%");
         LOGGER << "Setting screen. Threshold = " + mutils::float2string(threshold_) + "%";
         digitalWrite(alarmPin, HIGH);
     }
@@ -125,9 +126,9 @@ void Display::refresh()
         std::vector<float> o2s;
         // 读取传感器值
         list_.getNodeState(o2s);
-        size_t count = 0;
-        std::string str = "Node less than threshold =" + mutils::float2string(list_.getThreshold()) + "% :";
-        drawLine(0, str);
+        size_t count = 2;
+        drawLine(0, "Nodes less than");
+        drawLine(1, "threshold =" + mutils::float2string(list_.getThreshold()) + "% :");
         for (size_t i = 0; i != o2s.size(); ++i)
         {
             std::string str0;
