@@ -10,10 +10,10 @@ NodeList list;
 Collection collection(list);
 Display display(list);
 Logger LOGGER;
-#define KEY_ADD PB5 // PB5 加
-#define KEY_SUB PB10 // PB10 减
+#define KEY_ADD PB5      // PB5 加
+#define KEY_SUB PB10     // PB10 减
 #define KEY_CONFIRM PB11 // PB11 确认
-#define KEY_CANCEL PB8 // PB8 取消
+#define KEY_CANCEL PB8   // PB8 取消
 Key key({KEY_ADD, KEY_SUB, KEY_CONFIRM, KEY_CANCEL});
 bool enableAlarm = true;
 
@@ -94,15 +94,5 @@ void loop()
     delay(10);
 }
 
-// 串口中断函数
-void serialEvent2() {
-  while (collection.getSerialCollect().available()) {
-    // 收取新字节
-    uint8_t inChar = (uint8_t)collection.getSerialCollect().read();
-    ++collection.recvLength;
-    // 添加到buffer中
-    collection.getBuffer().push_back(inChar);
-  }
-}
 
 #endif

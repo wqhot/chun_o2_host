@@ -7,7 +7,7 @@
 #include <Wire.h>
 
 #define ADDR_Ax 0b000 //A2, A1, A0
-#define ADDR (0b1010 << 3) + ADDR_Ax
+#define ADDR 0xA0
 
 class Node
 {
@@ -185,15 +185,16 @@ private:
         Wire.write(data_addr);
         Wire.write(data);
         Wire.endTransmission();
+        delay(10);
     }
 
     byte readI2CByte(byte data_addr)
     {
-        byte data = NULL;
+        byte data = 0;
         Wire.beginTransmission(ADDR);
         Wire.write(data_addr);
         Wire.endTransmission();
-        Wire.requestFrom(ADDR, 1); //retrieve 1 returned byte
+        Wire.requestFrom(data_addr, 1); //retrieve 1 returned byte
         delay(1);
         if (Wire.available())
         {

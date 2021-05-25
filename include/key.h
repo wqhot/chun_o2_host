@@ -17,8 +17,8 @@ public:
     bool isClick(uint8_t key);
 
 private:
-    // 用于保存按键状态，0表示未被按下，>0表示按下的时间
-    std::map<uint8_t, uint32_t> keyStates_;
+    // 用于保存按键状态，0表示未被按下，>0表示按下的时间, -1表示按下后超时未抬起
+    std::map<uint8_t, int32_t> keyStates_;
     // 用于保存最近一次的点击状态, 0表示最近没有点击发生
     uint8_t lastClickKey_;
 };

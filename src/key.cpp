@@ -2,6 +2,8 @@
 #ifndef NATIVE
 #include <logger.hpp>
 
+#define CLICK_TIME 5
+
 Key::Key(std::vector<uint8_t> keyList)
     : lastClickKey_(0)
 {
@@ -23,18 +25,28 @@ void Key::scan()
         if (state == HIGH)
         {
             // 高电平, 计数归零
-            if (key.second > 0)
+            if (key.second > CLICK_TIME)
             {
                 // 之前被按下
                 // 记录一次点击
                 lastClickKey_ = key.first;
+                // 计数归零
+                key.second = 0;
             }
-            key.second = 0;
+            else if (key.second == -1)
+            {
+                //之前被按下一直未抬起
+                key.second = 0;
+                LOGGER << std::to_string(key.first) +  " button released.";
+            }
         }
         else
         {
-            // 低电平， 计数加一
-            ++key.second;
+            if (key.second >= 0)
+            {
+                // 低电平， 计数加一
+                ++key.second;
+            }
         }
     }
 }
@@ -48,11 +60,12 @@ bool Key::isPress(uint8_t key, uint32_t time)
     {
         return false;
     }
-    LOGGER << (std::to_string(key) + " button pressed for " + std::to_string(iter->second) );
+    //LOGGER << (std::to_string(key) + " button pressed for " + std::to_string(iter->second) );
     // 满足时间要求
     if (iter->second > time)
     {
-        iter->second = 0;
+        LOGGER << (std::to_string(key) + " button pressed for " + std::to_string(iter->second) );
+        iter->second = -1;
         return true;
     }
     return false;
@@ -63,6 +76,7 @@ bool Key::isClick(uint8_t key)
     if (lastClickKey_ == key)
     {
         lastClickKey_ = 0;
+        LOGGER << std::to_string(key) + " button clicked";
         return true;
     }
     return false;

@@ -21,15 +21,6 @@ public:
     bool recv();
 #endif
     bool recv(uint8_t *buffer, size_t length);
-    inline HardwareSerial &getSerialCollect()
-    {
-        return serialCollect_;
-    }
-    inline std::vector<uint8_t> &getBuffer()
-    {
-        return buffer_;
-    }
-    size_t recvLength;
 
 private:
     const std::vector<uint8_t> HEAD{0x1, 0x2, 0x3, 0x4};
@@ -49,6 +40,8 @@ private:
     uint8_t getID(std::vector<uint8_t>::iterator pos, uint32_t *id);
     // 计算数据
     uint8_t getData(std::vector<uint8_t>::iterator pos, float &data);
+    // 收取串口数据
+    int recvData(std::vector<uint8_t> &buffer, int maxLength);
 };
 // extern HardwareSerial serial_collect;
 
