@@ -16,6 +16,7 @@ Logger LOGGER;
 #define KEY_CANCEL PB8   // PB8 取消
 Key key({KEY_ADD, KEY_SUB, KEY_CONFIRM, KEY_CANCEL});
 bool enableAlarm = true;
+bool alarming = false;
 
 void setup()
 {
@@ -42,18 +43,13 @@ void loop()
         needRefresh = true;
         LOGGER << "CANCAL button pressed.";
     }
-    else if (key.isPress(KEY_CONFIRM, 100))
+    else if (key.isPress(KEY_CONFIRM, 100) && alarming)
     {
         // 长按确认键1s关闭报警功能
-        if (isAlarm)
-        {
-            LOGGER << "Alarm State.CONFIRM button pressed.";
-            enableAlarm = false;
-            needRefresh = true;
-            display.setState(mainScreen);
-        }else{
-            LOGGER << "CONFIRM button pressed.";
-        }
+        LOGGER << "Alarm State.CONFIRM button pressed.";
+        alarming = false;
+        needRefresh = true;
+        display.setState(mainScreen);
     }
     else
     {
@@ -87,6 +83,9 @@ void loop()
     if (isAlarm && enableAlarm)
     {
         display.setState(alarmScreen);
+        //一次性报警
+        alarming = true;
+        enableAlarm = false;
         needRefresh = true;
     }
     // 扫描一次按键状态
@@ -99,6 +98,5 @@ void loop()
     }
     delay(10);
 }
-
 
 #endif
