@@ -7,7 +7,7 @@
 #include <Wire.h>
 
 #define ADDR_Ax 0b000 //A2, A1, A0
-#define ADDR 0xA0
+#define ADDR 0x50
 
 class Node
 {
@@ -59,17 +59,17 @@ public:
     NodeList()
     {
         Wire.begin();
-        writeI2CByte(0, 1);
         // 读取EEPROM中的阈值
         union transfer
         {
             float f;
             uint8_t data[4];
         } t;
-        for (int i = 0; i != 4; ++i)
-        {
-            t.data[i] = readI2CByte(i + 1);
-        }
+        readI2CBuffer(0, t.data, 4);
+        // for (int i = 0; i != 4; ++i)
+        // {
+        //     t.data[i] = readI2CByte(i + 1);
+        // }
         threshold_ = t.f;
         if (threshold_ >= 100)
         {
@@ -147,10 +147,11 @@ public:
             uint8_t data[4];
         } t;
         t.f = threshold_;
-        for (int i = 0; i != 4; ++i)
-        {
-            writeI2CByte(i + 1, t.data[i]);
-        }
+        writeI2CPage(0, t.data, 4);
+        // for (int i = 0; i != 4; ++i)
+        // {
+        //     writeI2CByte(i + 1, t.data[i]);
+        // }
     }
 
 private:
@@ -185,7 +186,17 @@ private:
         Wire.write(data_addr);
         Wire.write(data);
         Wire.endTransmission();
-        delay(10);
+    }
+
+    void writeI2CPage(byte data_addr, byte *data, byte length)
+    {
+        Wire.beginTransmission(ADDR);
+        Wire.write(data_addr);
+        for (byte c = 0; c < length; ++c)
+        {
+            Wire.write(data[c]);
+        }
+        Wire.endTransmission();
     }
 
     byte readI2CByte(byte data_addr)
@@ -194,13 +205,27 @@ private:
         Wire.beginTransmission(ADDR);
         Wire.write(data_addr);
         Wire.endTransmission();
-        Wire.requestFrom(data_addr, 1); //retrieve 1 returned byte
-        delay(1);
+        Wire.requestFrom(ADDR, 1); //retrieve 1 returned byte
         if (Wire.available())
         {
             data = Wire.read();
         }
         return data;
+    }
+
+    void readI2CBuffer(byte data_addr, byte *data, byte length)
+    {
+        Wire.beginTransmission(ADDR);
+        Wire.write(data_addr);
+        Wire.endTransmission();
+        Wire.requestFrom(ADDR, length); //retrieve length returned byte
+        for (byte c = 0; c < length; ++c)
+        {
+            if (Wire.available())
+            {
+                data[c] = Wire.read();
+            }
+        }
     }
 };
 
