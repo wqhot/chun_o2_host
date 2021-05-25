@@ -141,7 +141,7 @@ void Collection::parser()
     }
     // 删除这一帧
     buffer_.erase(buffer_.begin(), buffer_.begin() + O2_BUFFER_LENGTH);
-    LOGGER << "Received message that o2 = " +mutils::float2string(o2)+ "%.";
+    LOGGER << "Received message that o2 = " + mutils::float2string(o2) + "%.";
     //氧气值做绝对值处理
     list_.getNode(id).setO2Num(std::abs(o2));
 }

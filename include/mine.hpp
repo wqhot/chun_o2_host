@@ -6,7 +6,7 @@
 #endif
 namespace mutils
 {
-    std::string float2string(float val)
+    static std::string float2string(float val)
     {
         // 整数部分
         int intPart = static_cast<int>(val * 100) / 100;
