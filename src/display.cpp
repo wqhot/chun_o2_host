@@ -1,4 +1,5 @@
 #include <display.h>
+#include <mine.hpp>
 #ifndef NATIVE
 #include <logger.hpp>
 
@@ -17,15 +18,6 @@ void Display::begin()
 
     u8g_.clearBuffer();                 // clear the internal memory
     u8g_.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
-}
-
-std::string float2string(float val)
-{
-    // 整数部分
-    int intPart = static_cast<int>(val * 100) / 100;
-    // 小数部分
-    int decPart = static_cast<int>(val * 100) % 100;
-    return std::to_string(intPart) + "." + std::to_string(std::abs(decPart));
 }
 
 void Display::drawText(uint8_t pos, uint8_t line, std::string str)
@@ -55,11 +47,7 @@ void Display::refresh()
         for (size_t i = 0; i != o2s.size(); ++i)
         {
             std::string str;
-            // 整数部分
-            int intPart = static_cast<int>(o2s[i] * 100) / 100;
-            // 小数部分
-            int decPart = static_cast<int>(o2s[i] * 100) % 100;
-            str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
+            str = "Node[" + std::to_string(i) + "] O2 = " + mutils::float2string(o2s[i]) + "%";
             LOGGER << str;
             drawText(1, i + 1, str);
         }
@@ -85,7 +73,7 @@ void Display::refresh()
                 {
                     threshold_ = 0.0;
                 }
-                LOGGER << "Add event processed over. Threshold = " + float2string(threshold_);
+                LOGGER << "Add event processed over. Threshold = " + mutils::float2string(threshold_);
                 break;
             case subEvent:
                 threshold_ -= 0.1;
@@ -97,33 +85,29 @@ void Display::refresh()
                 {
                     threshold_ = 0.0;
                 }
-                LOGGER << "Sub event processed over. Threshold = " + float2string(threshold_);
+                LOGGER << "Sub event processed over. Threshold = " + mutils::float2string(threshold_);
                 break;
             case cancelEvent:
                 setState(mainScreen);
                 threshold_ = list_.getThreshold();
                 refresh();
-                LOGGER << "Cancel event processed over. Threshold = " + float2string(threshold_);
+                LOGGER << "Cancel event processed over. Threshold = " + mutils::float2string(threshold_);
                 return;
                 break;
             case confirmEvent:
                 list_.setThreshold(threshold_);
                 setState(mainScreen);
                 refresh();
-                LOGGER << "Confirm event processed over. Threshold = " + float2string(threshold_);
+                LOGGER << "Confirm event processed over. Threshold = " + mutils::float2string(threshold_);
                 return;
                 break;
             default:
                 break;
             }
         }
-        // 整数部分
-        int intPart = static_cast<int>(threshold_ * 100) / 100;
-        // 小数部分
-        int decPart = static_cast<int>(threshold_ * 100) % 100;
-        std::string str = "Alarm Threshold = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
+        std::string str = "Alarm Threshold = " + mutils::float2string(threshold_) + "%";
         drawText(1, 1, str);
-        LOGGER << "Setting screen. Threshold = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
+        LOGGER << "Setting screen. Threshold = " + mutils::float2string(threshold_) + "%";
         digitalWrite(alarmPin, HIGH);
     }
     else if (displayState_ == alarmScreen)
@@ -142,25 +126,13 @@ void Display::refresh()
             std::string str;
             if (o2s[i] < list_.getThreshold())
             {
-                // 整数部分
-                int intPart = static_cast<int>(o2s[i] * 100) / 100;
-                // 小数部分
-                int decPart = static_cast<int>(o2s[i] * 100) % 100;
-                // 整数部分
-                int thresholdIntPart = static_cast<int>(list_.getThreshold() * 100) / 100;
-                // 小数部分
-                int thresholdDecPart = static_cast<int>(list_.getThreshold() * 100) % 100;
-                str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "% less than threshold that = " + std::to_string(thresholdIntPart) + "." + std::to_string(thresholdDecPart);
+                str = "Node[" + std::to_string(i) + "] O2 = " + mutils::float2string(o2s[i]) + "% less than threshold that = " + mutils::float2string(list_.getThreshold()) + "%";
                 LOGGER << str;
                 drawText(1, i + 1, str);
             }
             else
             {
-                // 整数部分
-                int intPart = static_cast<int>(o2s[i] * 100) / 100;
-                // 小数部分
-                int decPart = static_cast<int>(o2s[i] * 100) % 100;
-                str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
+                str = "Node[" + std::to_string(i) + "] O2 = " + mutils::float2string(o2s[i]) + "%";
                 LOGGER << str;
                 drawText(1, i + 1, str);
             }
