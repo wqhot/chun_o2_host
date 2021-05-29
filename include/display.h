@@ -10,9 +10,9 @@
 
 enum DisplayState
 {
-    mainScreen,     // 显示节点状态列表
-    settingScreen,  // 显示阈值设置界面
-    alarmScreen     // 显示报警界面
+    mainScreen,    // 显示节点状态列表
+    settingScreen, // 显示阈值设置界面
+    alarmScreen    // 显示报警界面
 };
 
 enum Event
@@ -20,7 +20,7 @@ enum Event
     addEvent,     // 加事件
     subEvent,     // 减事件
     confirmEvent, // 确认事件
-    cancelEvent  // 取消事件
+    cancelEvent   // 取消事件
 };
 
 class Display
@@ -28,6 +28,8 @@ class Display
 public:
     Display(NodeList &list);
     void drawText(uint8_t pos, uint8_t line, std::string str);
+    void drawLine(uint8_t line, std::string str) { drawText(0, line, str); };
+    void send();
     void refresh();
     void begin();
     inline void setState(DisplayState state)

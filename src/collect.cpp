@@ -1,10 +1,11 @@
 #include <collect.h>
+#include <mine.hpp>
 
-Collection::Collection(NodeList &list) : 
+Collection::Collection(NodeList &list) :
 #ifndef NATIVE
-    serialCollect_(PA3, PA2),
+                                         serialCollect_(PA3, PA2),
 #endif
-    list_(list)
+                                         list_(list)
 {
 #ifndef NATIVE
     serialCollect_.begin(115200, SERIAL_8N1);
@@ -58,7 +59,7 @@ bool Collection::recv()
     std::vector<uint8_t>::iterator head_pos = std::find_first_of(buffer_.begin(), buffer_.end(), HEAD.begin(), HEAD.end());
     if (head_pos == buffer_.end())
     {
-        //LOGGER << "Cannot find head from message frame.";
+        LOGGER << "Cannot find head from message frame.";
         return false;
     }
     // 删除head_pos以前内容
@@ -140,6 +141,7 @@ void Collection::parser()
     }
     // 删除这一帧
     buffer_.erase(buffer_.begin(), buffer_.begin() + O2_BUFFER_LENGTH);
-    //浮点数o2转str的bug LOGGER << "Received message that o2 = " << std::to_string(o2) << "%.";
-    list_.getNode(id).setO2Num(o2);
+    LOGGER << "Received message that o2 = " + mutils::float2string(o2) + "%.";
+    //氧气值做绝对值处理
+    list_.getNode(id).setO2Num(std::abs(o2));
 }

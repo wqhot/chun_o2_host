@@ -1,4 +1,5 @@
 #include <display.h>
+#include <mine.hpp>
 #ifndef NATIVE
 #include <logger.hpp>
 
@@ -14,32 +15,27 @@ Display::Display(NodeList &list) : list_(list),
 void Display::begin()
 {
     u8g_.begin();
-
     u8g_.clearBuffer();                 // clear the internal memory
     u8g_.setFont(u8g2_font_ncenB08_tr); // choose a suitable font
 }
 
-std::string float2string(float val)
-{
-    // 整数部分
-    int intPart = static_cast<int>(val * 100) / 100;
-    // 小数部分
-    int decPart = static_cast<int>(val * 100) % 100;
-    return std::to_string(intPart) + "." + std::to_string(std::abs(decPart));
-}
-
+//0 - index
 void Display::drawText(uint8_t pos, uint8_t line, std::string str)
 {
     // 计算字体占用高度
     uint8_t h = u8g_.getFontAscent() - u8g_.getFontDescent();
     // 画字符
-    u8g_.drawStr(pos, line * h, str.c_str());
+    u8g_.drawStr(pos + 1, (line + 1) * h, str.c_str());
+}
+
+void Display::send()
+{
     u8g_.sendBuffer();
+    u8g_.clearBuffer();
 }
 
 void Display::refresh()
 {
-    u8g_.clearBuffer();
     LOGGER << "The state of display is " + std::to_string(displayState_);
     if (displayState_ == mainScreen)
     {
@@ -52,22 +48,19 @@ void Display::refresh()
         std::vector<float> o2s;
         // 读取传感器值
         list_.getNodeState(o2s);
+        drawLine(0, "Monitoring...");
         for (size_t i = 0; i != o2s.size(); ++i)
         {
             std::string str;
-            // 整数部分
-            int intPart = static_cast<int>(o2s[i] * 100) / 100;
-            // 小数部分
-            int decPart = static_cast<int>(o2s[i] * 100) % 100;
-            str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
+            str = "Node[" + std::to_string(i) + "] O2 = " + mutils::float2string(o2s[i]) + "%";
             LOGGER << str;
-            drawText(1, i + 1, str);
+            drawLine(i + 1, str);
         }
         digitalWrite(alarmPin, HIGH);
     }
     else if (displayState_ == settingScreen)
     {
-        LOGGER << "Refreshing setting screen.";
+        LOGGER << "Entering setting screen.";
         // 处理事件队列
         while (eventQue_.size() != 0)
         {
@@ -85,7 +78,7 @@ void Display::refresh()
                 {
                     threshold_ = 0.0;
                 }
-                LOGGER << "Add event processed over. Threshold = " + float2string(threshold_);
+                LOGGER << "Add event processed over. Threshold = " + mutils::float2string(threshold_);
                 break;
             case subEvent:
                 threshold_ -= 0.1;
@@ -97,33 +90,29 @@ void Display::refresh()
                 {
                     threshold_ = 0.0;
                 }
-                LOGGER << "Sub event processed over. Threshold = " + float2string(threshold_);
+                LOGGER << "Sub event processed over. Threshold = " + mutils::float2string(threshold_);
                 break;
             case cancelEvent:
                 setState(mainScreen);
                 threshold_ = list_.getThreshold();
                 refresh();
-                LOGGER << "Cancel event processed over. Threshold = " + float2string(threshold_);
+                LOGGER << "Cancel event processed over. Threshold = " + mutils::float2string(threshold_);
                 return;
                 break;
             case confirmEvent:
                 list_.setThreshold(threshold_);
                 setState(mainScreen);
                 refresh();
-                LOGGER << "Confirm event processed over. Threshold = " + float2string(threshold_);
+                LOGGER << "Confirm event processed over. Threshold = " + mutils::float2string(threshold_);
                 return;
                 break;
             default:
                 break;
             }
         }
-        // 整数部分
-        int intPart = static_cast<int>(threshold_ * 100) / 100;
-        // 小数部分
-        int decPart = static_cast<int>(threshold_ * 100) % 100;
-        std::string str = "Alarm Threshold = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
-        drawText(1, 1, str);
-        LOGGER << "Setting screen. Threshold = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
+        drawLine(0, "Alarm Threshold");
+        drawLine(0, mutils::float2string(threshold_) + "%");
+        LOGGER << "Setting screen. Threshold = " + mutils::float2string(threshold_) + "%";
         digitalWrite(alarmPin, HIGH);
     }
     else if (displayState_ == alarmScreen)
@@ -133,40 +122,26 @@ void Display::refresh()
         {
             eventQue_.pop();
         }
-        LOGGER << "ALARM screen is on.";
+        //LOGGER << "ALARM screen is on.";
         std::vector<float> o2s;
         // 读取传感器值
         list_.getNodeState(o2s);
+        size_t count = 2;
+        drawLine(0, "Nodes less than");
+        drawLine(1, "threshold =" + mutils::float2string(list_.getThreshold()) + "% :");
         for (size_t i = 0; i != o2s.size(); ++i)
         {
-            std::string str;
+            std::string str0;
             if (o2s[i] < list_.getThreshold())
             {
-                // 整数部分
-                int intPart = static_cast<int>(o2s[i] * 100) / 100;
-                // 小数部分
-                int decPart = static_cast<int>(o2s[i] * 100) % 100;
-                // 整数部分
-                int thresholdIntPart = static_cast<int>(list_.getThreshold() * 100) / 100;
-                // 小数部分
-                int thresholdDecPart = static_cast<int>(list_.getThreshold() * 100) % 100;
-                str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "% less than threshold that = " + std::to_string(thresholdIntPart) + "." + std::to_string(thresholdDecPart);
-                LOGGER << str;
-                drawText(1, i + 1, str);
-            }
-            else
-            {
-                // 整数部分
-                int intPart = static_cast<int>(o2s[i] * 100) / 100;
-                // 小数部分
-                int decPart = static_cast<int>(o2s[i] * 100) % 100;
-                str = "Node[" + std::to_string(i) + "] O2 = " + std::to_string(intPart) + "." + std::to_string(decPart) + "%";
-                LOGGER << str;
-                drawText(1, i + 1, str);
+                str0 = "Node[" + std::to_string(i) + "] O2 = " + mutils::float2string(o2s[i]) + "%";
+                LOGGER << str0 + " -> Low";
+                drawLine(count++, str0);
             }
         }
         digitalWrite(alarmPin, LOW);
     }
+    send();
 }
 
 #endif
